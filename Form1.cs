@@ -149,7 +149,7 @@ namespace id_gen
             if (s_index <= s_limit - 1)
             {
                 //load next student to the id view..
-                //redrawId();
+                redrawId();
             }
 
             if (s_index >= s_limit - 1)
@@ -165,11 +165,14 @@ namespace id_gen
             s_limit = students.Tables[0].Rows.Count;
             s_index--;
 
+            if(s_index >= 0)
+                redrawId();
+
             if (s_index <= 0)
             {
                 s_index = 0;
                 MessageBox.Show("No more students in the database");
-            }
+            }            
         }
 
         public void generateStudentControls(DataSet studentsByClass)
@@ -371,8 +374,13 @@ namespace id_gen
                 if (stdId == id)
                 {
                     drawSingleStudentId(row1);
+                    s_index = students.Tables[0].Rows.IndexOf(row1);
                 }
+
             }
+
+            //find the record index on the students dataset
+            //foreach(row)
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
