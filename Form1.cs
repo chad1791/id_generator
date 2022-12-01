@@ -79,7 +79,8 @@ namespace id_gen
             {'Z', 160},
             {' ', 10},
             {'.', 60},
-            {'-', 80}
+            {'-', 80},
+            {'\'', 20}
         };
 
         public Form1()
@@ -137,8 +138,7 @@ namespace id_gen
             {
                 string? homeroom = row[0]?.ToString();
                 createClassDirectory(homeroom);
-            }            
-
+            } 
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -191,6 +191,7 @@ namespace id_gen
                     BackColor = Color.FromArgb(33, 31, 44),
                     BorderStyle = BorderStyle.FixedSingle
                 };
+
                 flowLayoutPanel1.Controls.Add(studentNameGroup);
                 studentNameGroup.Tag = row[0]?.ToString();
                 studentNameGroup.SetBounds(sgnx, sgny, 405, 60);                
@@ -211,11 +212,10 @@ namespace id_gen
                 Label stdName = new()
                 {
                     Text = toSentenceCase(row[1].ToString()) + " " + toSentenceCase(row[3].ToString()),
-                    //BackColor = Color.FromArgb(33, 31, 44),
                     BackColor = Color.Transparent,
                     BorderStyle = BorderStyle.None,
                     ForeColor = Color.White,
-                    Font = new Font("Segoe UI", 14.0f, FontStyle.Bold)  //00925
+                    Font = new Font("Segoe UI", 14.0f, FontStyle.Bold)
                 };
                 stdName.SetBounds(snx, sny, 250, 25);
                 stdName.Click += ChildClick;
@@ -231,7 +231,6 @@ namespace id_gen
                 Label stdId = new()
                 {
                     Text = row[0]?.ToString(),
-                    //BackColor = Color.FromArgb(33, 31, 44),
                     BackColor = Color.Transparent,
                     BorderStyle = BorderStyle.None,
                     ForeColor = SystemColors.ButtonShadow,
@@ -251,7 +250,6 @@ namespace id_gen
                 Label stdHrv = new()
                 {
                     Text = row[4]?.ToString(),
-                    //BackColor = Color.FromArgb(33, 31, 44),
                     BackColor= Color.Transparent,
                     BorderStyle = BorderStyle.None,
                     ForeColor = SystemColors.ButtonShadow,
@@ -271,7 +269,6 @@ namespace id_gen
                 Label stdHrLbl = new()
                 {
                     Text = "Homeroom",
-                    //BackColor = Color.FromArgb(33, 31, 44),
                     BackColor= Color.Transparent,
                     BorderStyle = BorderStyle.None,
                     ForeColor = SystemColors.ButtonShadow,
@@ -291,7 +288,6 @@ namespace id_gen
                 Label dots = new()
                 {
                     Text = "...",
-                    //BackColor = Color.FromArgb(33, 31, 44),
                     BackColor= Color.Transparent,
                     BorderStyle = BorderStyle.None,
                     ForeColor = SystemColors.ButtonShadow,
@@ -311,7 +307,6 @@ namespace id_gen
                     parent.BackColor = Color.FromArgb(33, 31, 44);
                     foreach (Control child in parent.Controls)
                     {
-                        //child.BackColor = Color.FromArgb(33, 31, 44);
                         child.BackColor = Color.Transparent;
                     }
                 }
@@ -336,7 +331,6 @@ namespace id_gen
                     parent.BackColor = Color.FromArgb(33, 31, 44);
                     foreach (Control child in parent.Controls)
                     {
-                        //child.BackColor = Color.FromArgb(33, 31, 44);
                         child.BackColor = Color.Transparent;
                     }
                 }
@@ -378,9 +372,6 @@ namespace id_gen
                 }
 
             }
-
-            //find the record index on the students dataset
-            //foreach(row)
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -629,7 +620,8 @@ namespace id_gen
                         s_nameW += 200;
 
                     if (name.Length == 12)
-                        s_nameW += 50;
+                        s_nameW += 80;
+                        edge += 30;
                 }
                 else
                 if (name.Length >= 13 && name.Length < 20)
@@ -641,12 +633,14 @@ namespace id_gen
 
                     if (name.Length == 15)
                         s_nameW -= 80;
+                        //edge -= 80;
 
                     if (name.Length == 16)
-                        s_nameW -= 120;
+                        s_nameW -= 60;
 
                     if (name.Length == 17)
-                        s_nameW -= 180;
+                        s_nameW -= 100;
+                        edge += 30;
 
                     if (name.Length >= 18 && name.Length <= 19)
                         s_nameW -= 150;
