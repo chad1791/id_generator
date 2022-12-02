@@ -1,5 +1,6 @@
 using MySqlX.XDevAPI.Relational;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -25,62 +26,62 @@ namespace id_gen
         //keys to calculate the width of the names
         Dictionary<char, int> keys = new()
         {
-            {'a', 110},
-            {'b', 130},
-            {'c', 115},
-            {'d', 115},
-            {'e', 115},
-            {'f', 90},
-            {'g', 130},
-            {'h', 120},
-            {'i', 70},
-            {'j', 70},
-            {'k', 115},
-            {'l', 65},
-            {'m', 175},
+            {'a', 120},
+            {'b', 132},
+            {'c', 122},
+            {'d', 120},
+            {'e', 118},
+            {'f', 92},
+            {'g', 127},
+            {'h', 125},
+            {'i', 65},
+            {'j', 67},
+            {'k', 120},
+            {'l', 67},
+            {'m', 178},
             {'n', 130},
-            {'o', 135},
-            {'p', 125},
-            {'q', 125},
-            {'r', 105},
-            {'s', 125},
-            {'t', 95},
-            {'u', 135},
-            {'v', 130},
-            {'w', 160},
-            {'x', 120},
-            {'y', 130},
-            {'z', 110},
-            {'A', 120},
-            {'B', 150},
-            {'C', 160},
-            {'D', 160},
-            {'E', 140},
-            {'F', 140},
-            {'G', 170},
-            {'H', 160},
-            {'I', 80},
-            {'J', 120},
-            {'K', 165},
-            {'L', 140},
-            {'M', 180},
-            {'N', 130},
-            {'O', 170},
-            {'P', 145},
-            {'Q', 170},
-            {'R', 150},
-            {'S', 140},
-            {'T', 150},
-            {'U', 120},
-            {'V', 160},
-            {'W', 210},
-            {'X', 150},
-            {'Y', 160},
-            {'Z', 160},
+            {'o', 132},
+            {'p', 128},
+            {'q', 128},
+            {'r', 98},
+            {'s', 122},
+            {'t', 89},
+            {'u', 132},
+            {'v', 128},
+            {'w', 165},
+            {'x', 123},
+            {'y', 127},
+            {'z', 115},
+            {'A', 155},
+            {'B', 152},
+            {'C', 154},
+            {'D', 152},
+            {'E', 143}, ////
+            {'F', 133},
+            {'G', 163},
+            {'H', 151},
+            {'I', 72},
+            {'J', 118},
+            {'K', 159},
+            {'L', 138},
+            {'M', 172},
+            {'N', 148},
+            {'O', 163},
+            {'P', 143},
+            {'Q', 168},
+            {'R', 154},
+            {'S', 142},
+            {'T', 137},
+            {'U', 147},
+            {'V', 152},
+            {'W', 203},
+            {'X', 148},
+            {'Y', 152},
+            {'Z', 142},
             {' ', 10},
-            {'.', 60},
-            {'-', 80},
-            {'\'', 20}
+            {'.', 65},
+            {'-', 88},
+            {'\'', 68}
         };
 
         public Form1()
@@ -90,16 +91,20 @@ namespace id_gen
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            Debug.WriteLine("Program starting...");
+
             //create a dataset for students, classes
             students = new DataSet();
             classes = new DataSet();
 
             //define connection parameter
-            connection = "Datasource=localhost;port=3306;username=root;password=;database=hs_students";
+            //connection = "Datasource=localhost;port=3306;username=root;password=;database=hs_students";
+            connection = "Datasource=localhost;port=3306;username=root;password=;database=hs_selected"; //- testing
 
             //define queries for students and classes
             string qStudents = "SELECT * FROM students";
-            string qClasses = "SELECT DISTINCT homeroom FROM students ORDER BY homeroom ASC;";
+            //string qClasses = "SELECT DISTINCT homeroom FROM students ORDER BY homeroom ASC;";
+            string qClasses = "SELECT DISTINCT size FROM students ORDER BY size ASC;"; //- testing
 
             //create an instance of the dbManager class
             dbManager myDb = new(connection);
@@ -118,11 +123,13 @@ namespace id_gen
 
             //link classes dataset to classes combobox;
             comboBox1.DataSource = classes.Tables[0];
-            comboBox1.DisplayMember = "homeroom";
+            //comboBox1.DisplayMember = "homeroom"; 
+            comboBox1.DisplayMember = "size"; // -testing
 
             //populate the groupbox with the initial list of students
             string? currentHm = comboBox1.Text;
-            string? qStdByHm = "SELECT * FROM students WHERE homeroom='" + currentHm + "';";
+            //string? qStdByHm = "SELECT * FROM students WHERE homeroom='" + currentHm + "';";
+            string? qStdByHm = "SELECT * FROM students WHERE size='" + currentHm + "';"; //- testing
             students = myDb.getStudentsByHomeroom(qStdByHm);
             generateStudentControls(students);
 
@@ -178,8 +185,7 @@ namespace id_gen
         public void generateStudentControls(DataSet studentsByClass)
         {
             int sgnx = 11;
-            int sgny = 0;  //add 25 on each y
-            //height = 15, width = 60; default values
+            int sgny = 0;  
 
             flowLayoutPanel1.Controls.Clear();
 
@@ -211,7 +217,8 @@ namespace id_gen
                 //create name labels for each student
                 Label stdName = new()
                 {
-                    Text = toSentenceCase(row[1].ToString()) + " " + toSentenceCase(row[3].ToString()),
+                    //Text = toSentenceCase(row[1].ToString()) + " " + toSentenceCase(row[3].ToString()),
+                    Text = row[1].ToString() + " " + row[3].ToString(), //-testing
                     BackColor = Color.Transparent,
                     BorderStyle = BorderStyle.None,
                     ForeColor = Color.White,
@@ -386,7 +393,8 @@ namespace id_gen
             dbManager myDb = new(connection);
 
             //define queries for students and classes
-            string qStdByHm = "SELECT * FROM students WHERE homeroom='" + currentHm + "';";
+            //string qStdByHm = "SELECT * FROM students WHERE homeroom='" + currentHm + "';";
+            string qStdByHm = "SELECT * FROM students WHERE size='" + currentHm + "';"; // -testing
 
             //fetch students by homeroom            
             students = myDb.getStudentsByHomeroom(qStdByHm);
@@ -402,7 +410,8 @@ namespace id_gen
             DataRow row1 = students.Tables[0].Rows[s_index];
 
             string? id = row1[0].ToString();
-            string? name = toSentenceCase(row1[1]?.ToString()) + " " + toSentenceCase(row1[3]?.ToString());
+            //string? name = toSentenceCase(row1[1]?.ToString()) + " " + toSentenceCase(row1[3]?.ToString());
+            string? name = row1[1]?.ToString() + " " + row1[3]?.ToString(); // -testing
             string? homeroom = row1[4].ToString();
             
 
@@ -432,16 +441,18 @@ namespace id_gen
             foreach(DataRow row in students.Tables[0].Rows)
             {
                 string? id = row[0].ToString();
-                string? name = toSentenceCase(row[1].ToString()) + " " + toSentenceCase(row[3].ToString());
+                //string? name = toSentenceCase(row[1].ToString()) + " " + toSentenceCase(row[3].ToString());
+                string? name = row[1].ToString() + " " + row[3].ToString(); // -testing
                 string? homeroom = row[4].ToString();
 
                 //create bitmap with student ids...
                 Bitmap studentId = displayStudentID(id, name, homeroom);
 
+                //show image to the picture box first
+                pictureBox1.Image = studentId;
+
                 //save the student id to the homeroom directory...
                 studentId.Save(@"E:\hs files\processed\" + homeroom + "\\" + id + ".png", ImageFormat.Png);
-
-                //pictureBox1.Image = studentId;
             }
         }
 
@@ -493,7 +504,8 @@ namespace id_gen
 
                 // assign values to the student data variables... 
                 string? id = d[0].ToString();
-                string? name = toSentenceCase(d[1].ToString()) + " " + toSentenceCase(d[3].ToString());
+                //string? name = toSentenceCase(d[1].ToString()) + " " + toSentenceCase(d[3].ToString());
+                string? name = d[1].ToString() + " " + d[3].ToString(); // -testing
                 string? homeroom = d[4].ToString();
 
                 //create bitmap with student ids...
@@ -519,10 +531,13 @@ namespace id_gen
             foreach(char l in name)
             {
                 width += keys[l];
+                Debug.WriteLine(l + ": " + keys[l]);
             }
 
             /*string nameLower = name.ToLower();
             width = keys[nameLower[0]];*/
+
+            Debug.WriteLine("Name width: " + width);
 
             return width;
         }
@@ -574,7 +589,7 @@ namespace id_gen
                 catch(Exception ex)
                 {
                     //MessageBox.Show(ex.ToString());
-                    MessageBox.Show("No image found for " + name + "\n" + ex.ToString());
+                    MessageBox.Show("No image found for " + name + "\n");
                 }
 
             #endregion
@@ -582,7 +597,7 @@ namespace id_gen
             #region student_name
 
                 //determine the width of the id..
-                int edge = 20;
+                int edge = 0;
                 int id_width = raw.Width;
                 Font s_font = new("Arial", 45, FontStyle.Bold);
                 int s_nameW = getNameWidth(name);
@@ -590,65 +605,67 @@ namespace id_gen
                 int s_nameY = 2300;
                 int s_nameX = 0;
 
-            /*if (name.Length == 10)
-            s_nameW += 100;*/
+            //MessageBox.Show(name.Length.ToString()); //$Password2022$
 
-            //MessageBox.Show(name.Length.ToString());
-
+                if (name.Length == 7)
+                {
+                    s_font = new Font("Arial", 44, FontStyle.Bold);
+                }
+                else
+                if (name.Length == 8 || name.Length == 2)
+                {
+                    s_font = new Font("Arial", 44, FontStyle.Bold);
+                }
+                else
                 if (name.Length == 9)
                 {
                     s_font = new Font("Arial", 44, FontStyle.Bold);
-                    s_nameW += 60;
                 }
                 else
                 if (name.Length == 10)
                 {
                     s_font = new Font("Arial", 44, FontStyle.Bold);
-                    s_nameW += 80;
                 }
                 else
                 if (name.Length == 11)
                 {
                     s_font = new Font("Arial", 43, FontStyle.Bold);
-                    s_nameW += 20;
                 }
                 else
                 if (name.Length > 11 && name.Length < 13)
                 {
                     s_font = new Font("Arial", 45, FontStyle.Bold);
-                    if (name.Length == 11)
-                        s_nameW += 200;
-
-                    if (name.Length == 12)
-                        s_nameW += 80;
-                        edge += 30;
                 }
                 else
                 if (name.Length >= 13 && name.Length < 20)
                 {
                     s_font = new Font("Arial", 43, FontStyle.Bold);
 
-                    if (name.Length == 14)
+                    /*if (name.Length == 14)
                         s_nameW -= 30;
 
                     if (name.Length == 15)
-                        s_nameW -= 80;
-                        //edge -= 80;
+                        s_nameW += 50;
+                        edge -= 150;
 
                     if (name.Length == 16)
                         s_nameW -= 60;
 
                     if (name.Length == 17)
                         s_nameW -= 100;
-                        edge += 30;
+                        edge += 130;
 
                     if (name.Length >= 18 && name.Length <= 19)
-                        s_nameW -= 150;
+                        s_nameW -= 110;*/
                 }
                 if (name.Length >= 20)
                 {
                     s_font = new Font("Arial", 42, FontStyle.Bold);
-                    edge = 10;
+                    
+                /*edge = 10;
+
+                    if (name.Length == 20)
+                        s_nameW -= 200;
 
                     if (name.Length >= 21 && name.Length < 24)
                         s_nameW -= 150;
@@ -659,7 +676,7 @@ namespace id_gen
                     if (name.Length >= 25)
                     {
                         s_font = new Font("Arial", 40, FontStyle.Bold);
-                        s_nameW -= 360;
+                        s_nameW -= 450;
                     }
 
                     if (name.Length >= 28)
@@ -667,11 +684,22 @@ namespace id_gen
                         s_font = new Font("Arial", 37, FontStyle.Bold);
                         edge -= 200;
                         //s_nameW -= 400;
-                    }
+                    }*/
                 }
 
+                //edge will be negative subtracting x units times 3, where x is the length of the name...
+                //edge = name.Length * 4;
+
                 //set the x coordinate for the name
-                s_nameX = id_width - (s_nameW + edge);
+                s_nameX = id_width - (s_nameW + edge); //Peter 1445 //
+
+                Debug.WriteLine("Image width:" + id_width);
+                Debug.WriteLine("Name width:" + s_nameW);
+                Debug.WriteLine("Edge:" + edge);
+                Debug.WriteLine("Name X Coord:" + s_nameX);
+
+                Debug.WriteLine("Space from name to edge :" + (id_width - (s_nameX + s_nameW)));
+
 
                 //SELECT * FROM `students` WHERE CHAR_LENGTH(CONCAT(first, " ", last)) = 18;
                 drawString(new Rectangle(s_nameX, s_nameY, s_nameW, s_nameH), canvas, name, s_font, Brushes.White);
@@ -805,10 +833,10 @@ namespace id_gen
             this.Close();
         }
 
-        private void button7_Click(object sender, EventArgs e)
+        /*private void button7_Click(object sender, EventArgs e)
         {
             MessageBox.Show("I am button 7");
-        }
+        }*/
 
         /*private void button5_Click(object sender, EventArgs e)
         {
